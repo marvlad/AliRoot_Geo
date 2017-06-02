@@ -4751,13 +4751,13 @@ TGeoCone * PartBody_t013     = new TGeoCone("PartBody_t013", 0.4767/2, 0.0 , 5.8
 //PartBody
   RB241_WarmModule -> AddNode(PartBody_001, 1 , new TGeoCombiTrans(-5.05257-1.2-1.8-1.8/2, 0.0, -16.0/2 -7.3,Ry90m));
   RB241_WarmModule -> AddNode(PartBody_002, 1 , new TGeoTranslation(0.0,0.0,0.0));
-  RB241_WarmModule -> AddNode(PartBody_003, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093));
+  /*RB241_WarmModule -> AddNode(PartBody_003, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093));
   RB241_WarmModule -> AddNode(PartBody_004, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093-11.1/2-2.0/2));
   RB241_WarmModule -> AddNode(PartBody_005, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767/2));  
   RB241_WarmModule -> AddNode(PartBody_006, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4/2));
   RB241_WarmModule -> AddNode(PartBody_007, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767/2));
   RB241_WarmModule -> AddNode(PartBody_008, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767+2.3/2));
-  RB241_WarmModule -> AddNode(PartBody_009, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767+2.3+2.0/2));
+  RB241_WarmModule -> AddNode(PartBody_009, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767+2.3+2.0/2));*/
   RB241_WarmModule -> AddNode(PartBody_010, 1 , new TGeoTranslation(0.0 , 0.0 , 0.0 ));
  //RB241_WarmModule -> AddNode(PartBody_010, 1 , new TGeoCombiTrans(-5.05257 - 1.2 - 1.8 - 1.8 - 5.6 - 5.1183*2 - 2.4, 0.0, -15.3, Ry90m));
  RB241_WarmModule -> AddNode(PartBody_011, 1 , new TGeoTranslation(-5.05257 - 1.2 - 1.8 - 1.8 - 5.6 - 5.1183*2 -5.9-1.5/2, 0.0, -15.3+3.7816));
