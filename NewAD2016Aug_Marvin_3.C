@@ -94,7 +94,7 @@ enum {kCoordX=0, kCoordY=1, kCoordZ=2};
 // void FindNodes(const Double_t x, const Double_t y, const Double_t z, const Double_t tf, const Int_t Coord=2) ; 
 // TGeoVolumeAssembly * CreateWarmModule_VMAOI();
 void CreateCurvedBundles();
-TGeoVolume * CreateWarmModuleSupport();
+TGeoVolume * CreateWarmModule();
 TGeoVolumeAssembly * CreateBLM();
 TGeoVolumeAssembly * CreatePipeOvalyzed(const TGeoMedium * mat);
 TGeoVolumeAssembly * CreateADAShielding();
@@ -879,7 +879,7 @@ void NewAD2016Aug_Marvin_3()
     Ry180 = new TGeoRotation("Ry180", 180., 180.,   0.) ;  //   3    |   2
     Ry90m = new TGeoRotation("Ry90m",  90., -90., -90.) ;
     Ry90  = new TGeoRotation("Ry90" ,  90.,  90., -90.) ;
-    TGeoVolume * voTest = CreateWarmModuleSupport();
+    TGeoVolume * voTest = CreateWarmModule();
     // TGeoVolume * voTest = CreateOldADA();
     // TGeoVolume * voTest = CreatePump();
     voTest -> SetTransparency(0);
@@ -4538,9 +4538,12 @@ TGeoVolumeAssembly * CreateBLM()
 }
 
 
-
-TGeoVolume * CreateWarmModuleSupport()
+TGeoVolume * CreateWarmModule()
 {
+//************************************************************************************************************************************************************
+
+//******************************************************************************************************************************************
+
   TGeoVolumeAssembly * ST0521057_VAMPA = new TGeoVolumeAssembly("ST0521057_VAMPA");
   /////////////////////////////////////////////////////////////////////////////
   //
@@ -4549,11 +4552,19 @@ TGeoVolume * CreateWarmModuleSupport()
   // Organizarion CERN
   // https://a360.autodesk.com/viewer/#id/dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YTM2MHZpZXdlci90MTQ5NTAxNzM5MzczNF8wNjU0NTAxMzE2NDkzMzU5M18xNDk1MDE3MzkzNzM1LnN0cA
   
+  const Double_t tcks_        =   0.3;//thickness
+  const Double_t tcks_tube    =   0.3;//thickness
+  
   TGeoBBox * VP_0002_Box1   = new TGeoBBox("VP_0002_Box1", 13.6/2,  23.5/2, 16.0/2 );
+  TGeoBBox * VP_0002_Box1_aux1   = new TGeoBBox("VP_0002_Box1_aux1", (13.6/2-2*tcks_-5.6/2)*0.5,  23.5/2+0.1, 11.2/2+0.3/2 );//X2
+  TGeoBBox * VP_0002_Box1_aux2   = new TGeoBBox("VP_0002_Box1_aux2", (13.6/2-2*tcks_) ,  23.5/2+0.1,14.2/2-tcks_-11.2/2 );
+  TGeoBBox * VP_0002_Box1_aux3   = new TGeoBBox("VP_0002_Box1_aux3", 5.6/2 - 2*tcks_ ,  23.5/2-2*tcks_,11.2/2-2*tcks_ );
+  
   //forwar boxes
   TGeoBBox * VP_0002_Box1_f1   = new TGeoBBox("VP_0002_Box1_f1", 12.8/2, 3.9/2, 0.4/2 );
   TGeoBBox * VP_0002_Box1_f2   = new TGeoBBox("VP_0002_Box1_f2", 11.2/2, 3.1/2, 1.4/2 );
   TGeoBBox * VP_0002_Box1_f3   = new TGeoBBox("VP_0002_Box1_f3", 5.6/2, 2.1/2,  11.2/2 );
+  
   
   //backward boxes
   TGeoBBox * VP_0002_Box1_b1   = new TGeoBBox("VP_0002_Box1_b1",  12.8/2, 2.6/2, 0.4/2 );
@@ -4564,17 +4575,36 @@ TGeoVolume * CreateWarmModuleSupport()
   TGeoTube * VP_0002_Tube_001     = new TGeoTube("VP_0002_Tube_001"     , 0.    ,  1.9867  , 20.8/2 );//major_tube
   TGeoTube * VP_0002_Tube_002     = new TGeoTube("VP_0002_Tube_002"     , 0.    ,  1.7141  , 1.2/2 );//intermediate_tube
   TGeoTube * VP_0002_Tube_003     = new TGeoTube("VP_0002_Tube_003"     , 0.    ,  0.8974  , 2.1/2 );//minor tube
- 
+
   //TUBES__VP_002_2
-  TGeoTube * VP_0002_Tube_021     = new TGeoTube("VP_0002_Tube_021"     , 0.    ,  5.05257  , 11.8/2 ); //huge tube for VP_002
-  TGeoTube * VP_0002_Tube_022     = new TGeoTube("VP_0002_Tube_022"     , 0.    ,  5.6419  , 1.8/2 );  //short tube with large area at VP_002
-  TGeoTube * VP_0002_Tube_023     = new TGeoTube("VP_0002_Tube_023"     , 0.    ,  3.1564  , 2.3/2 );  //This tube will used for cut : 1.2/2 
+  TGeoTube * VP_0002_Tube_021     = new TGeoTube("VP_0002_Tube_021"     , (5.05257-tcks_tube)    ,  5.05257  , 11.8/2 ); //huge tube for VP_002
+  TGeoTube * VP_0002_Tube_021_b     = new TGeoTube("VP_0002_Tube_021_b"     , 0.0    ,  (5.05257-tcks_tube)  , tcks_tube/2 ); 
+  TGeoTube * VP_0002_Tube_021_     = new TGeoTube("VP_0002_Tube_021_"     , 0.0    ,  5.05257  , 11.8/2 ); //huge tube for VP_002 FOR CUT
+  TGeoTube * VP_0002_Tube_022     = new TGeoTube("VP_0002_Tube_022"     , 5.6419-3.1564+ tcks_tube   ,  5.6419  , 1.8/2 );  //short tube with large area at VP_002
+  TGeoTube * VP_0002_Tube_023     = new TGeoTube("VP_0002_Tube_023"     ,  (3.1564- tcks_tube)    ,  3.1564  , 2.3/2);  //This tube will used for cut : 1.2/2 
+  TGeoTube * VP_0002_Tube_023_c     = new TGeoTube("VP_0002_Tube_023_c"     ,  0.0    ,  3.1564  , 2.3/2+4);  //This tube will used for cut : 1.2/2 
 
+
+  //TUBE FOR CUT
+/*  TGeoTube * VP_0002_Tube_001     = new TGeoTube("VP_0002_Tube_001"     , 5.05257- tcks_tube   ,  5.05257  , 20.8/2 );//major_tube*/
+  
+  
   (new TGeoCombiTrans("trTube", -5.10257,  0., 0.0, Ry90m)) -> RegisterYourself();
-  /*(new TGeoCombiTrans("trTUBE", TGeoCombiTrans(-5.05257+2.3/2-1.2, 0.0, 11.8/2 -7.3,Ry90m)) -> RegisterYourself();*/
-
-  TGeoCompositeShape * VP_0002_Tube_023_ = new TGeoCompositeShape("VP_0002_Tube_023_", "VP_0002_Tube_023:trTube - VP_0002_Tube_021");
-
+  (new TGeoCombiTrans("trTube_tb1", -5.10257+3,  0., -16.0/2 -7.3, Ry90m)) -> RegisterYourself();
+  (new TGeoTranslation("trTube_tb2", 0.0, 0.0, -16.0/2 - 11.8/2)) -> RegisterYourself();
+  (new TGeoTranslation("trTube_tb3", 0.0, 0.0, 0.0)) -> RegisterYourself();
+//(new TGeoTranslation("trTube_cut",-5.05257+2.3/2-1.2+5.10257+tcks_tube, 0.0, -16.0/2 -7.3)) -> RegisterYourself();
+  /*(new TGeoCombiTrans("trTUBE", TGeoCombiTrans(-5.0-5.6/2-0.5*(13.6-4*tcks_-5.6)*0.5, 0.0, -15.9/2+11.2/2+1.8)5257+2.3/2-1.2, 0.0, 11.8/2 -7.3,Ry90m)) -> RegisterYourself();*/
+  (new TGeoTranslation("trTube_3",0.0, 0.0, 9.8+8.0+4.8/2)) -> RegisterYourself();
+  (new TGeoTranslation("trTube_4",5.6/2+0.5*(13.6-4*tcks_-5.6)*0.5, 0.0, -15.9/2+11.2/2+1.8+0.3)) -> RegisterYourself();
+  (new TGeoTranslation("trTube_5",-5.6/2-0.5*(13.6-4*tcks_-5.6)*0.5, 0.0, -15.9/2+11.2/2+1.8+0.3)) -> RegisterYourself();
+  (new TGeoTranslation("trTube_6",0.0, 0.0, -15.9/2+11.2/2+1.8+11.2/2+0.5*(3.0-2*tcks_))) -> RegisterYourself();
+  
+  TGeoCompositeShape * VP_0002_Tube_023_ = new TGeoCompositeShape("VP_0002_Tube_023_", "VP_0002_Tube_023:trTube - VP_0002_Tube_021_");
+  TGeoCompositeShape * Hole_Box01 = new TGeoCompositeShape("Hole_Box01", "VP_0002_Box1 - VP_0002_Box1_aux2:trTube_6 - VP_0002_Box1_aux1:trTube_4 - VP_0002_Box1_aux1:trTube_5 - VP_0002_Box1_aux3 ");
+  TGeoCompositeShape * VP_0002_Tube_021_c = new TGeoCompositeShape ("VP_0002_Tube_021_c", "VP_0002_Tube_021:trTube_tb2 - VP_0002_Tube_023_c:trTube_tb1");
+  
+  
   TGeoVolume * VP_0002_01 = new TGeoVolume("VP_0002_01", VP_0002_Box1, kMedSteelSh);
   VP_0002_01 -> SetLineColor(kGray);
   
@@ -4605,14 +4635,27 @@ TGeoVolume * CreateWarmModuleSupport()
   TGeoVolume * VP_0002_10 = new TGeoVolume("VP_0002_10", VP_0002_Tube_001, kMedSteelSh);
   VP_0002_10 -> SetLineColor(kGray);
 
-  TGeoVolume * VP_0002_11 = new TGeoVolume("VP_0002_11", VP_0002_Tube_021, kMedSteelSh);
+  TGeoVolume * VP_0002_11 = new TGeoVolume("VP_0002_11", VP_0002_Tube_021_c, kMedSteelSh);
   VP_0002_11 -> SetLineColor(kGray);
+  
+  TGeoVolume * VP_0002_11_a = new TGeoVolume("VP_0002_11_a", VP_0002_Tube_021_b, kMedSteelSh);
+  VP_0002_11_a -> SetLineColor(kGray);
 
   TGeoVolume * VP_0002_12 = new TGeoVolume("VP_0002_12", VP_0002_Tube_022, kMedSteelSh);
   VP_0002_12 -> SetLineColor(kGray);
 
   TGeoVolume * VP_0002_13 = new TGeoVolume("VP_0002_13", VP_0002_Tube_023_, kMedSteelSh);
   VP_0002_13 -> SetLineColor(kGray);
+
+  TGeoVolume * VP_0002_14 = new TGeoVolume("VP_0002_14", VP_0002_Box1_aux1, kMedSteelSh);
+  VP_0002_14 -> SetLineColor(kGray);
+
+  TGeoVolume * VP_0002_15 = new TGeoVolume("VP_0002_15", VP_0002_Box1_aux2, kMedSteelSh);
+  VP_0002_15 -> SetLineColor(kGray);
+
+  TGeoVolume * VP_0002_16 = new TGeoVolume("VP_0002_16", Hole_Box01, kMedSteelSh);
+  VP_0002_16 -> SetLineColor(kGray);  
+
   
   
 ////////////////////////////////////////////////////////////////////////////////  
@@ -4620,14 +4663,14 @@ TGeoVolume * CreateWarmModuleSupport()
   TGeoBBox * PartBody_bx01   = new TGeoBBox("PartBody_bx01", 1.5/2,  15.0/2, 16.0/2 );  
 //SHORT TUBES
   TGeoTube * PartBody_t001     = new TGeoTube("PartBody_t001"     , 0.    ,   7.5694 , 2.0/2 );//need two
-  TGeoTube * PartBody_t002     = new TGeoTube("PartBody_t002"     , 0.    ,   5.67004 , 1.8/2 );//**-->BOX
+  TGeoTube * PartBody_t002     = new TGeoTube("PartBody_t002"     , 5.67004-3.5593+tcks_tube    ,   5.67004 , 1.8/2 );//**-->BOX
   TGeoTube * PartBody_t003     = new TGeoTube("PartBody_t003"     , 0.    ,   5.67004 , 1.7/2 );//*#
   TGeoTube * PartBody_t004     = new TGeoTube("PartBody_t004"     , 0.    ,   3.4779 , 1.3/2 );
       
 //LONG TUBES
-  TGeoTube * PartBody_t005     = new TGeoTube("PartBody_t005"     , 0.    ,   3.1816 , 7.0/2 );//Cut to 5.9 with box 
-  TGeoTube * PartBody_t006     = new TGeoTube("PartBody_t006"     , 0.    ,   3.5593 , 6.7/2 );//Cut to 5.6 with circle * #
-  TGeoTube * PartBody_t007     = new TGeoTube("PartBody_t007"     , 0.    ,   3.5593 , 6.7/2 );//Cut to 5.6 with circle **
+  TGeoTube * PartBody_t005     = new TGeoTube("PartBody_t005"     , 3.1816-tcks_tube    ,   3.1816 , 7.0/2 );//Cut to 5.9 with box 
+  TGeoTube * PartBody_t006     = new TGeoTube("PartBody_t006"     , 3.5593-tcks_tube    ,   3.5593 , 6.7/2 );//Cut to 5.6 with circle * #
+  TGeoTube * PartBody_t007     = new TGeoTube("PartBody_t007"     , 3.5593 - tcks_tube    ,   3.5593 , 6.7/2 );//Cut to 5.6 with circle **
   TGeoTube * PartBody_t008     = new TGeoTube("PartBody_t008"     , 0.    ,   1.8881 , 5.1/2 );//cut to 4.8
   
 //HUGE TUBES 
@@ -4641,11 +4684,13 @@ TGeoCone * PartBody_t013     = new TGeoCone("PartBody_t013", 0.4767/2, 0.0 , 5.8
   
   (new TGeoCombiTrans("trTube_1",-13.2026, 0.0, -15.3,Ry90m)) -> RegisterYourself();//tube_small
   (new TGeoTranslation("trTube_2",-20.5709, 0.0, -16.4093)) -> RegisterYourself();//tube_small
+  (new TGeoCombiTrans("trTube_31",-28.0892, 0.0, -15.3,Ry90m)) -> RegisterYourself();
+  
   /*(new TGeoCombiTrans("trTUBE", TGeoCombiTrans(-5.05257+2.3/2-1.2, 0.0, 11.8/2 -7.3,Ry90m)) -> RegisterYourself();*/
 
-  TGeoCompositeShape * PartBody_t014 = new TGeoCompositeShape("PartBody_t014", "PartBody_t007:trTube_1 - PartBody_t009:trTube_2");
+  TGeoCompositeShape * PartBody_t014 = new TGeoCompositeShape("PartBody_t014", "PartBody_t007:trTube_1 - PartBody_t009:trTube_2");//remember for cut
   
- 
+  TGeoCompositeShape * PartBody_t005_c = new TGeoCompositeShape("PartBody_t005_c", "PartBody_t005:trTube_31 - PartBody_t009:trTube_2");//remember for cut
  
   TGeoVolume * PartBody_001 = new TGeoVolume("PartBody_001", PartBody_t002, kMedSteelSh);
   PartBody_001 -> SetLineColor(kGray);
@@ -4674,43 +4719,147 @@ TGeoCone * PartBody_t013     = new TGeoCone("PartBody_t013", 0.4767/2, 0.0 , 5.8
   TGeoVolume * PartBody_009 = new TGeoVolume("PartBody_009", PartBody_t001, kMedSteelSh);
   PartBody_009 -> SetLineColor(kGray);
 
-  TGeoVolume * PartBody_010 = new TGeoVolume("PartBody_010", PartBody_t005, kMedSteelSh);
+  TGeoVolume * PartBody_010 = new TGeoVolume("PartBody_010", PartBody_t005_c, kMedSteelSh);
   PartBody_010 -> SetLineColor(kGray);
   
-   
-  TGeoVolumeAssembly * voADsuppVab15 = new TGeoVolumeAssembly("voADsuppVab15");
-  voADsuppVab15 -> AddNode(VP_0002_01, 1 , new TGeoTranslation(0., 0., 0.));
-  voADsuppVab15 -> AddNode(VP_0002_02, 1 , new TGeoTranslation(0., 23.5/2+3.9/2, -15.9/2+0.4));
-  voADsuppVab15 -> AddNode(VP_0002_03, 1 , new TGeoTranslation(0., 23.5/2+3.1/2, -15.9/2+1.0));
-  voADsuppVab15 -> AddNode(VP_0002_04, 1 , new TGeoTranslation(0., 23.5/2+2.1/2, -15.9/2+11.2/2+1.8));
-  voADsuppVab15 -> AddNode(VP_0002_05, 1 , new TGeoTranslation(0., -23.5/2-2.6/2, -15.9/2+0.4));
-  voADsuppVab15 -> AddNode(VP_0002_06, 1 , new TGeoTranslation(0., -23.5/2-1.8/2, -15.9/2+1.0));
-  voADsuppVab15 -> AddNode(VP_0002_07, 1 , new TGeoTranslation(0., -23.5/2-1.5/2, -15.9/2+11.2/2+1.8));
+  TGeoVolume * PartBody_011 = new TGeoVolume("PartBody_011", PartBody_bx01, kMedSteelSh);
+  PartBody_011 -> SetLineColor(kGray);
+  //*********************** 
+  TGeoVolumeAssembly * RB241_WarmModule = new TGeoVolumeAssembly("RB241_WarmModule");
+  RB241_WarmModule -> AddNode(VP_0002_16, 1 , new TGeoTranslation(0., 0., 0.));
+  RB241_WarmModule -> AddNode(VP_0002_02, 1 , new TGeoTranslation(0., 23.5/2+3.9/2, -15.9/2+0.4));
+  RB241_WarmModule -> AddNode(VP_0002_03, 1 , new TGeoTranslation(0., 23.5/2+3.1/2, -15.9/2+1.0));
+  RB241_WarmModule -> AddNode(VP_0002_04, 1 , new TGeoTranslation(0., 23.5/2+2.1/2, -15.9/2+11.2/2+1.8));
+  RB241_WarmModule -> AddNode(VP_0002_05, 1 , new TGeoTranslation(0., -23.5/2-2.6/2, -15.9/2+0.4));
+  RB241_WarmModule -> AddNode(VP_0002_06, 1 , new TGeoTranslation(0., -23.5/2-1.8/2, -15.9/2+1.0));
+  RB241_WarmModule -> AddNode(VP_0002_07, 1 , new TGeoTranslation(0., -23.5/2-1.5/2, -15.9/2+11.2/2+1.8));
 
-  voADsuppVab15 -> AddNode(VP_0002_08, 1 , new TGeoTranslation(-11.2/2+0.8974, 23.5/2+(3.1-0.8974), -15.9/2+2.1/2+1.8));
-  voADsuppVab15 -> AddNode(VP_0002_09, 1 , new TGeoTranslation(-11.2/2+0.8974, 23.5/2+(3.1-0.8974), -15.9/2+1.2/2+2.1+1.8));
-  voADsuppVab15 -> AddNode(VP_0002_10, 1 , new TGeoTranslation(-11.2/2+0.8974, 23.5/2+(3.1-0.8974), -15.9/2+1.2+20.8/2+2.1+1.8));
-  voADsuppVab15 -> AddNode(VP_0002_11, 1 , new TGeoTranslation(0.0, 0.0, -16.0/2 - 11.8/2));
-  voADsuppVab15 -> AddNode(VP_0002_12, 1 , new TGeoCombiTrans(-5.05257-1.2-1.8/2, 0.0, -16.0/2 -7.3,Ry90m));
-  voADsuppVab15 -> AddNode(VP_0002_13, 1 , new TGeoTranslation(-5.05257+2.3/2-1.2+5.10257, 0.0, -16.0/2 -7.3));
+  RB241_WarmModule -> AddNode(VP_0002_08, 1 , new TGeoTranslation(-11.2/2+0.8974, 23.5/2+(3.1-0.8974), -15.9/2+2.1/2+1.8));
+  RB241_WarmModule -> AddNode(VP_0002_09, 1 , new TGeoTranslation(-11.2/2+0.8974, 23.5/2+(3.1-0.8974), -15.9/2+1.2/2+2.1+1.8));
+  RB241_WarmModule -> AddNode(VP_0002_10, 1 , new TGeoTranslation(-11.2/2+0.8974, 23.5/2+(3.1-0.8974), -15.9/2+1.2+20.8/2+2.1+1.8));
+  RB241_WarmModule -> AddNode(VP_0002_11, 1 , new TGeoTranslation(0.0, 0.0, 0.0));
+  RB241_WarmModule -> AddNode(VP_0002_11_a, 1 , new TGeoTranslation(0.0, 0.0, -16.0/2 - 11.8+tcks_tube/2));
+  RB241_WarmModule -> AddNode(VP_0002_12, 1 , new TGeoCombiTrans(-5.05257-1.2-1.8/2, 0.0, -16.0/2 -7.3,Ry90m));
+ RB241_WarmModule -> AddNode(VP_0002_13, 1 , new TGeoTranslation(-5.05257+2.3/2-1.2+5.10257, 0.0, -16.0/2 -7.3));
+  
+ //******************** 
+ /* RB241_WarmModule -> AddNode(VP_0002_14, 1 , new TGeoTranslation(5.6/2+0.5*(13.6-4*tcks_-5.6)*0.5, 0.0, -15.9/2+11.2/2+1.8));
+  RB241_WarmModule -> AddNode(VP_0002_14, 2 , new TGeoTranslation(-5.6/2-0.5*(13.6-4*tcks_-5.6)*0.5, 0.0, -15.9/2+11.2/2+1.8));
+  RB241_WarmModule -> AddNode(VP_0002_15, 1 , new TGeoTranslation(0.0, 0.0, -15.9/2+11.2/2+1.8+11.2/2+0.5*(3.0-tcks_)));*/
+ /* RB241_WarmModule -> AddNode(VP_0002_16, 1 , new TGeoTranslation(0.0, 0.0, 0.0));*/
   
 //PartBody
-  voADsuppVab15 -> AddNode(PartBody_001, 1 , new TGeoCombiTrans(-5.05257-1.2-1.8-1.8/2, 0.0, -16.0/2 -7.3,Ry90m));
-  voADsuppVab15 -> AddNode(PartBody_002, 1 , new TGeoTranslation(0.0,0.0,0.0));
-  voADsuppVab15 -> AddNode(PartBody_003, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093));
-  voADsuppVab15 -> AddNode(PartBody_004, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093-11.1/2-2.0/2));
-  voADsuppVab15 -> AddNode(PartBody_005, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767/2));  
-  voADsuppVab15 -> AddNode(PartBody_006, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4/2));
-  voADsuppVab15 -> AddNode(PartBody_007, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767/2));
-  voADsuppVab15 -> AddNode(PartBody_008, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767+2.3/2));
-  voADsuppVab15 -> AddNode(PartBody_009, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767+2.3+2.0/2));
-  voADsuppVab15 -> AddNode(PartBody_010, 1 , new TGeoCombiTrans(-5.05257 - 1.2 - 1.8 - 1.8 - 5.6 - 5.1183*2 - 2.4, 0.0, -15.3, Ry90m));
-/*  voADsuppVab15 -> AddNode(VP_0002_13, 1 , new TGeoCombiTrans(-5.05257+2.3/2-1.2, 0.0, -16.0/2 -7.3,Ry90m));*/        
+  RB241_WarmModule -> AddNode(PartBody_001, 1 , new TGeoCombiTrans(-5.05257-1.2-1.8-1.8/2, 0.0, -16.0/2 -7.3,Ry90m));
+  RB241_WarmModule -> AddNode(PartBody_002, 1 , new TGeoTranslation(0.0,0.0,0.0));
+  RB241_WarmModule -> AddNode(PartBody_003, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093));
+  RB241_WarmModule -> AddNode(PartBody_004, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093-11.1/2-2.0/2));
+  RB241_WarmModule -> AddNode(PartBody_005, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767/2));  
+  RB241_WarmModule -> AddNode(PartBody_006, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4/2));
+  RB241_WarmModule -> AddNode(PartBody_007, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767/2));
+  RB241_WarmModule -> AddNode(PartBody_008, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767+2.3/2));
+  RB241_WarmModule -> AddNode(PartBody_009, 1 , new TGeoTranslation(-5.05257-1.2-1.8-1.8-6.7+1.1-5.1183, 0.0, -16.0/2 -7.3-1.1093+11.1/2+0.4767+10.4+0.4767+2.3+2.0/2));
+  RB241_WarmModule -> AddNode(PartBody_010, 1 , new TGeoTranslation(0.0 , 0.0 , 0.0 ));
+ //RB241_WarmModule -> AddNode(PartBody_010, 1 , new TGeoCombiTrans(-5.05257 - 1.2 - 1.8 - 1.8 - 5.6 - 5.1183*2 - 2.4, 0.0, -15.3, Ry90m));
+ RB241_WarmModule -> AddNode(PartBody_011, 1 , new TGeoTranslation(-5.05257 - 1.2 - 1.8 - 1.8 - 5.6 - 5.1183*2 -5.9-1.5/2, 0.0, -15.3+3.7816));
+  
+ //RB241_WarmModule -> AddNode(VP_0002_13, 1 , new TGeoCombiTrans(-5.05257+2.3/2-1.2, 0.0, -16.0/2 -7.3,Ry90m));       
+ /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ ///
+ ///
+   /////////////////////////////////////////////////////////////////////////////
+  //
+  // Make Vacuum Suport Vab foot base plate15 in RB24/1 FP (B-Side) /marvin.ascencio@pucp.edu.pe
+  // Flat Bar
+  // https://edms.cern.ch/ui/file/373462/AA/lhcvhl__0007-vAA.pdf
+  // https://edms.cern.ch/file/439918/AA/lhcvhl__0027-vAA.pdf
+  // Foot tube: LHCVHL__0007
+  // LHC Drawing: LHCVHL__0005
+  Double_t paf    = TMath::Pi()/4;
+  Double_t sqrtt  = TMath::Sqrt(3);
+  Double_t ds     = 2* (TMath::Sin(paf));
+  Double_t fxt    = -25 + (3/sqrtt - 0.9);
+  Double_t fxt2   = -25 - (3/sqrtt + 3.9);
+  Double_t fxtd   =  25 - (3/sqrtt - 0.9);
+  Double_t fxtd2  =  25 + (3/sqrtt + 3.9);
+  Double_t fyt    =  - (sqrtt*(3/sqrtt -0.9));
+  Double_t fyt2   =  (sqrtt*(3/sqrtt - 0.9)) ;
+  Double_t trFx[] = {fxt , -25 , fxt2, -25. };
+  Double_t trFy[] = {0.  , fyt, 0, fyt2 };
+  Double_t trFx2[] = {fxtd , 25. , fxtd2, 25. };
+  Double_t trFy2[] = {0.  , fyt, 0, fyt2 };
+  TGeoBBox * ShADFlatBar   = new TGeoBBox("ShADFlatBar"   , 50/2  ,  35/2 , 2/2   ); 
+  TGeoBBox * ShADFlatBarb  = new TGeoBBox("ShADFlatBarb"  , ds    ,  7/2  , 8/2   ); 
+  TGeoArb8 * shADFlatBara  = new TGeoArb8("shADFlatBara"  , 10/2. ); 
+  TGeoArb8 * shADFlatBara2 = new TGeoArb8("shADFlatBara2" , 10/2. ); 
+  TGeoTube * ShADBolts     = new TGeoTube("ShADBolts"     , 0.    ,  0.7  , 5.4/2 ); 
+      for (Int_t i=0; i<4; i++)
+  {
+      shADFlatBara  -> SetVertex(i   , trFx[i]  , trFy[i]  ); 
+      shADFlatBara  -> SetVertex(i+4 , trFx[i]  , trFy[i]  ); 
+      shADFlatBara2 -> SetVertex(i   , trFx2[i] , trFy2[i] ); 
+      shADFlatBara2 -> SetVertex(i+4 , trFx2[i] , trFy2[i] ); 
+  }
 
+  TGeoRotation * Rx45  = new TGeoRotation("Rx45" ,   0.,   0.,  45.) ;
+  TGeoRotation * Rx45m = new TGeoRotation("Rx45m",   0.,   0., -45.) ;
+  (new TGeoCombiTrans("trFlatBar1", -25.,  35/2., 0., Rx45m)) -> RegisterYourself();
+  (new TGeoCombiTrans("trFlatBar2",  25., -35/2., 0., Rx45m)) -> RegisterYourself();
+  (new TGeoCombiTrans("trFlatBar3",  25.,  35/2., 0,  Rx45 )) -> RegisterYourself();
+  (new TGeoCombiTrans("trFlatBar4", -25., -35/2., 0., Rx45 )) -> RegisterYourself();
+  TGeoCompositeShape * shFlatBarc = new TGeoCompositeShape("shFlatBarc", 
+      "ShADFlatBar - ShADFlatBarb:trFlatBar4 - ShADFlatBarb:trFlatBar3 - ShADFlatBarb:trFlatBar2 - ShADFlatBarb:trFlatBar1 - shADFlatBara - shADFlatBara2");
+  TGeoVolume * voADFlatBar = new TGeoVolume("voADFlatBar", shFlatBarc, kMedSteelSh);
+  voADFlatBar -> SetLineColor(kGray);
+  TGeoVolume * voADBolt   = new TGeoVolume("voADBolt", ShADBolts, kMedSteelSh);
+  voADBolt -> SetLineColor(kGray);
+  
+  /////////////////////////////////////////////////////////////////////////////
+  //
+  // Make Vacuum Suport Vab 15 in RB24/1 FP (B-Side) /marvin.ascencio@pucp.edu.oe
+  // Sheet (15x200x220)
+  // LHC Drawing: LHCVHL__0024
+  
+  TGeoBBox * ShADSheet = new TGeoBBox("ShADSheet", 11, 10, 1.5/2);
+  TGeoBBox * ShADSheetb = new TGeoBBox("ShADSheetb", ds, 7/2, 8/2); 
 
-  ST0521057_VAMPA ->AddNode(voADsuppVab15, 1, new TGeoCombiTrans(0., 0., 0., Rx90m ));
+  (new TGeoCombiTrans("trSheet1", -11.,  10., 0., Rx45m)) -> RegisterYourself();
+  (new TGeoCombiTrans("trSheet2",  11., -10., 0., Rx45m)) -> RegisterYourself();
+  (new TGeoCombiTrans("trSheet3",  11.,  10., 0.,  Rx45 )) -> RegisterYourself();
+  (new TGeoCombiTrans("trSheet4", -11., -10., 0., Rx45 )) -> RegisterYourself();
+  TGeoCompositeShape * shSheet = new TGeoCompositeShape("shSheet", 
+      "ShADSheet - ShADSheetb:trSheet4 - ShADSheetb:trSheet3 - ShADSheetb:trSheet2 - ShADSheetb:trSheet1");
+  TGeoVolume * voADSheet = new TGeoVolume("voADSheet", shSheet, kMedSteelSh);
+  voADSheet -> SetLineColor(kGray);
+  //voWarmModuleSupport ->AddNode(voADSheet,2, new TGeoTranslation(0., 14.3,78.65));
+
+  /////////////////////////////////////////////////////////////////////////////
+  //
+  // Make Vacuum Suport Vab 15 in RB24/1 FP (B-Side) /marvin.ascencio@pucp.edu.pe
+  // TUBE epr.5 (100x80x700)
+  // LHC Drawing: LHCVHL__0024
+  // FOOT UPPER PLATE
+  
+  TGeoBBox * ShADTubeepr  = new TGeoBBox("ShADTubeepr"  , 5.0 , 4.  , 39.0 ); 
+  TGeoBBox * ShADTubeeprb = new TGeoBBox("ShADTubeeprb" , 4.0 , 3.0 , 39.0     ); 
+  TGeoCompositeShape * shTubeepr = new TGeoCompositeShape("shTubeepr", "ShADTubeepr - ShADTubeeprb");
+  TGeoVolume * voADTubeepr = new TGeoVolume("voADTubeepr", shTubeepr, kMedSteelSh);
+  voADTubeepr -> SetLineColor(kGreen);
+  TGeoVolumeAssembly * voADsuppVab15 = new TGeoVolumeAssembly("voADsuppVab15");
+  voADsuppVab15 -> AddNode(voADFlatBar,1 , new TGeoCombiTrans(14.3, 10.0+8.8, 0., Rz90 ));
+  voADsuppVab15 -> AddNode(voADSheet, 1, new TGeoTranslation(14.3, 0., 86.65) );
+  voADsuppVab15 -> AddNode(voADSheet, 2, new TGeoTranslation(14.3, 0., 79.75));
+  voADsuppVab15 -> AddNode(voADTubeepr, 1, new TGeoTranslation(14.3, 0., 40.));
+  voADsuppVab15 -> AddNode(voADBolt, 1, new TGeoTranslation(14.3+7.7, 8.3, 83.2));
+  voADsuppVab15 -> AddNode(voADBolt, 2, new TGeoTranslation(14.3-7.7, 8.3, 83.2));
+  voADsuppVab15 -> AddNode(voADBolt, 3, new TGeoTranslation(14.3+7.7, -8.3, 83.2));
+  voADsuppVab15 -> AddNode(voADBolt, 4, new TGeoTranslation(14.3-7.7, -8.3, 83.2));
+
+  ST0521057_VAMPA ->AddNode(RB241_WarmModule, 1, new TGeoCombiTrans(0., 0., 0.0, Rz90 ));
+  ST0521057_VAMPA ->AddNode(voADsuppVab15, 1, new TGeoCombiTrans(-15.0+1, -119-1.5, -10.0 -1.5,Rx90m));
   return (TGeoVolume*) ST0521057_VAMPA;
 }
+
+
 
 
 
